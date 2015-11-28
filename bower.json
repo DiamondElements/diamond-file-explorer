@@ -1,0 +1,26 @@
+{
+  "name": "diamond-file-explorer",
+  "description": "My geometric app",
+  "main": "index.js",
+  "authors": [
+    "[object Object]"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "electron-app",
+    "electron"
+  ],
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vaadin-grid": "~0.2.1",
+    "iron-icons": "PolymerElements/iron-icons#~1.0.5"
+  }
+}

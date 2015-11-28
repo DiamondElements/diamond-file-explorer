@@ -1,0 +1,114 @@
+<link rel="import" href="./bower_components/polymer/polymer.html">
+<link rel="import" href="./bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="./bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="./bower_components/diamond-file-system/diamond-file-system.html">
+<link rel="import" href="diamond-file-explorer-item.html">
+
+<dom-module id="diamond-file-explorer">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <diamond-file-system exec="readdir" args="/" on-results-changed="_onReaddir"></diamond-file-system>
+    <paper-toolbar>
+
+    </paper-toolbar>
+    <vaadin-grid id="grid" on-select="_onSelect">
+      <table>
+        <colgroup>
+          <col width="64">
+          <col width="100">
+          <col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th></th>
+            <th>File Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template is="dom-repeat" items="[[folders]]">
+            <tr>
+              <td>
+                <iron-icon icon="folder" item-icon></iron-icon>
+              </td>
+              <td>{{item.name}}</td>
+            </tr>
+          </template>
+          <template is="dom-repeat" items="[[files]]">
+            <tr>
+              <td>
+                <iron-icon icon="description" item-icon></iron-icon>
+              </td>
+              <td>{{item.name}}</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </vaadin-grid>
+  </template>
+  <script>
+  (function(Polymer, fs) {
+    'use strict';
+      class DiamondFileExplorer {
+        beforeRegister() {
+          this.is = 'diamond-file-explorer';
+
+          this.properties = {
+            folders: {
+              type: Array,
+              value: () => [],
+              notify: true
+            },
+
+            files: {
+              type: Array,
+              value: () => [],
+              notify: true
+            },
+
+            _cache: {
+              type: Object,
+              value: () => []
+            }
+          };
+        }
+
+        _getStats(dir) {
+          fs.stat(`/${dir}`, (err, stats) => {
+            this._cache[`/${dir}`] = stats;
+            if (stats.isDirectory()) {
+              this.push('folders', {name: dir, path: `/${dir}`, stats: stats});
+              return;
+            }
+            this.push('files', {name: dir, path: `/${dir}`, stats: stats});
+          });
+        }
+
+        _onReaddir(event) {
+          let results = event.detail.value;
+          for (let i = 0; i < results.length; i++) {
+            this._getStats(results[i]);
+          }
+        }
+
+        _onSelect(event) {
+          let selectedIndex = this.$.grid.selection.selected();
+          let selectedItem;
+          if (this.folders.length > selectedIndex) {
+            selectedItem = this.folders[selectedIndex]
+          } else {
+            selectedItem = this.files[(selectedIndex - this.folders.length)];
+          }
+          console.dir(selectedItem);
+        }
+      }
+
+      Polymer(DiamondFileExplorer);
+    })(Polymer, require('fs'));
+  </script>
+
+</dom-module>
