@@ -1,29 +1,3 @@
-# diamond-file-explorer
+First launch may need you to refresh the application. `cmd+r`.
 
-> My geometric app
-
-
-## Dev
-
-```
-$ npm install
-```
-
-### Run
-
-```
-$ npm start
-```
-
-### Build
-
-```
-$ npm run build
-```
-
-Builds the app for OS X, Linux, and Windows, using [electron-packager](https://github.com/maxogden/electron-packager).
-
-
-## License
-
-MIT © [Brett Lamy](http://testing.com)
+![Imgur](http://i.imgur.com/HFrPLzw.png)
