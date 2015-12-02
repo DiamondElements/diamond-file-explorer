@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "vaadin-grid": "~0.2.1",
-    "iron-icons": "PolymerElements/iron-icons#~1.0.5",
-    "htmlgl": "PixelsCommander/HTML-GL#~0.3.1"
+    "paper-elements": "PolymerElements/paper-elements",
+    "diamond-elements": "DiamondElements/diamond-elements"
   }
 }
