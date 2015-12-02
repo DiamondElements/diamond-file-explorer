@@ -19,8 +19,9 @@ function onClosed() {
 
 function createMainWindow() {
 	const win = new electron.BrowserWindow({
-		width: 600,
-		height: 400
+		width: 800,
+		height: 600,
+		frame: false
 	});
 
 	win.loadURL(`file://${__dirname}/index.html`);
@@ -32,12 +33,6 @@ function createMainWindow() {
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
-	}
-});
-
-app.on('activate-with-no-open-windows', () => {
-	if (!mainWindow) {
-		mainWindow = createMainWindow();
 	}
 });
 

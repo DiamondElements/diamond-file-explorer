@@ -21,14 +21,26 @@
 
     <!-- Web Components -->
 		<link rel="import" href="diamond-file-explorer.html">
+		<link rel="import" href="bower_components/diamond-chrome/diamond-chrome.html">
     <style>
-    html, body {
+    html,
+    body {
+      width: 100%;
+      height: 100%;
       padding: 0;
       margin: 0;
+      overflow: hidden;
+    }
+    diamond-file-explorer {
+      width: 100%;
+      height: calc(100% - 30px);
     }
     </style>
   </head>
-  <body unresolved>
-		<diamond-file-explorer></diamond-file-explorer>
+  <body>
+    <template is="dom-bind">
+      <diamond-chrome title="{{title}}"></diamond-chrome>
+      <diamond-file-explorer title="{{title}}"></diamond-file-explorer>
+    </template>
   </body>
 </html>

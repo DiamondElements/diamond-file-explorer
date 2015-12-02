@@ -9,44 +9,40 @@
     <style>
       :host {
         display: block;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-direction: column;
+        -webkit-flex-direction: column;
+        flex-direction: column;
+      }
+
+      paper-toolbar {
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+      }
+
+      vaadin-grid {
+        width: 100%;
+        height: calc(100% - 55px);
       }
     </style>
 
-    <diamond-file-system exec="readdir" args="/" on-results-changed="_onReaddir"></diamond-file-system>
+    <diamond-file-system exec="readdir" args="[[path]]" on-results-changed="_onReaddir"></diamond-file-system>
     <paper-toolbar>
-
+      <template is="dom-if" if="{{_shouldShowArrow(path)}}" restamp="true">
+        <iron-icon icon="arrow-back" on-tap="_goBack"></iron-icon>
+      </template>
+      <p class='title'>File Explorer</p>
     </paper-toolbar>
     <vaadin-grid id="grid" on-select="_onSelect">
       <table>
         <colgroup>
           <col width="64">
-          <col width="100">
-          <col>
+          <col header-text="Name" sortable="" name="name" width="300">
+          <col header-text="Size" sortable="" name="stats.size">
+          <col header-text="Date Created" sortable="" name="stats.ctime">
         </colgroup>
-        <thead>
-          <tr>
-            <th></th>
-            <th>File Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template is="dom-repeat" items="[[folders]]">
-            <tr>
-              <td>
-                <iron-icon icon="folder" item-icon></iron-icon>
-              </td>
-              <td>{{item.name}}</td>
-            </tr>
-          </template>
-          <template is="dom-repeat" items="[[files]]">
-            <tr>
-              <td>
-                <iron-icon icon="description" item-icon></iron-icon>
-              </td>
-              <td>{{item.name}}</td>
-            </tr>
-          </template>
-        </tbody>
       </table>
     </vaadin-grid>
   </template>
@@ -73,28 +69,74 @@
             _cache: {
               type: Object,
               value: () => []
+            },
+
+            path: {
+              type: String,
+              observer: '_onReaddir',
+              value: '/',
+              notify: true,
+              reflectToAttribute: true
+            },
+
+            pathHistory: {
+              type: Array
             }
           };
         }
 
+
+        iconRenderer(cell) {
+          cell.element.innerHTML = '';
+          var child = document.createElement('iron-icon');
+          child.setAttribute('icon', 'folder');
+          cell.element.appendChild(child);
+        }
+
+
+        attached() {
+          this.$.grid.columns[0].renderer = this.iconRenderer;
+        }
+
+
+        /**
+        * Returns a promise to get stats for a given directory.
+        * @param String - directory.
+        * @return Promise
+        */
         _getStats(dir) {
-          fs.stat(`/${dir}`, (err, stats) => {
-            this._cache[`/${dir}`] = stats;
+          var path = (this.path && this.path.endsWith('/')) ? `${this.path}${dir}` : `${this.path}/${dir}`;
+          return fs.statAsync(path).then((stats) => {
+            this._cache[path] = stats;
             if (stats.isDirectory()) {
-              this.push('folders', {name: dir, path: `/${dir}`, stats: stats});
+              this.push('folders', {name: dir, path: path, stats: stats});
               return;
             }
-            this.push('files', {name: dir, path: `/${dir}`, stats: stats});
+            this.push('files', {name: dir, path: path, stats: stats});
           });
         }
 
+        /**
+        * Listener for whenever we read a new directory.
+        */
         _onReaddir(event) {
+          if (!event || !event.detail || !event.detail.value) { return; }
+          this.folders = [];
+          this.files = [];
           let results = event.detail.value;
+          let promises = [];
           for (let i = 0; i < results.length; i++) {
-            this._getStats(results[i]);
+            promises.push(this._getStats(results[i]));
           }
+          Promise.all(promises).then(() => {
+            let listing = this.folders.concat(this.files);
+            this.$.grid.items = listing;
+          })
         }
 
+        /**
+        * Handle a row click.
+        */
         _onSelect(event) {
           let selectedIndex = this.$.grid.selection.selected();
           let selectedItem;
@@ -103,12 +145,32 @@
           } else {
             selectedItem = this.files[(selectedIndex - this.folders.length)];
           }
-          console.dir(selectedItem);
+          if (selectedItem && selectedItem.path) {
+            if (!this.pathHistory) {
+              this.pathHistory = [];
+            }
+            this.push('pathHistory', this.path);
+            this.path = selectedItem.path;
+          }
+        }
+
+        /**
+        * Handle back button click.
+        */
+        _goBack() {
+          this.path = this.pathHistory.pop();
+        }
+
+        /**
+        * Handle back button click.
+        */
+        _shouldShowArrow(path) {
+          return (path !== '/');
         }
       }
 
       Polymer(DiamondFileExplorer);
-    })(Polymer, require('fs'));
+    })(Polymer, require('bluebird').promisifyAll(require('fs')));
   </script>
 
 </dom-module>

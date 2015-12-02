@@ -4,12 +4,11 @@
   "version": "0.0.0",
   "description": "My geometric app",
   "license": "MIT",
-  "repository": "BLamy/diamond-file-explorer",
-  "author": {
-    "name": "Brett Lamy",
-    "email": "BLamy@calvauto.com",
-    "url": "testing.com"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blamy/diamond-file-explorer.git"
   },
+  "author": "Brett Lamy <BLamy@calvauto.com> (testing.com)",
   "electronVersion": "0.35.0",
   "scripts": {
     "test": "xo",
@@ -26,6 +25,7 @@
     "electron"
   ],
   "dependencies": {
+    "bluebird": "^3.0.5",
     "electron-debug": "^0.5.0",
     "fs": "0.0.2"
   },
@@ -40,5 +40,10 @@
       "node",
       "browser"
     ]
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/blamy/diamond-file-explorer/issues"
+  },
+  "homepage": "https://github.com/blamy/diamond-file-explorer#readme",
+  "main": "index.js"
 }
