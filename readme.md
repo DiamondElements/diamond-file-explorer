@@ -7,8 +7,4 @@ bower install && npm install && npm start
 ```
 
 
-Currently has a bug where the elements might not upgrade on first launch. Refreshing the page seems to fix the issue. 
-`cmd-opt-i` Open dev tools.
-`cmd+r` to refresh.
-
 ![Imgur](http://i.imgur.com/BaV6nHM.png)
