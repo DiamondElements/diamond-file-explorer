@@ -1,4 +1,4 @@
-<link rel="import" href="./bower_components/polymer/polymer.html">
+let<link rel="import" href="./bower_components/polymer/polymer.html">
 <link rel="import" href="./bower_components/vaadin-grid/vaadin-grid.html">
 <link rel="import" href="./bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="./bower_components/iron-icons/iron-icons.html">
@@ -88,8 +88,8 @@
 
         iconRenderer(cell) {
           cell.element.innerHTML = '';
-          var child = document.createElement('iron-icon');
-          var stats = cell.row.data.stats;
+          let child = document.createElement('iron-icon');
+          let stats = cell.row.data.stats;
           if (stats.isDirectory()) {
             child.icon = 'folder';
           } else if(stats.isSymbolicLink()) {
@@ -112,7 +112,7 @@
         * @return Promise
         */
         _getStats(dir) {
-          var path = (this.path && this.path.endsWith('/')) ? `${this.path}${dir}` : `${this.path}/${dir}`;
+          let path = (this.path && this.path.endsWith('/')) ? `${this.path}${dir}` : `${this.path}/${dir}`;
           return fs.statAsync(path).then((stats) => {
             this._cache[path] = stats;
             if (stats.isDirectory()) {
